@@ -1,27 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
+const verifyToken = require('../middleware/verifyToken');
+const User = require('../models/User');
 
-function verifyToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.status(401).json({ message: 'Token missing' });
-
+// Protected Dashboard Route
+router.get('/dashboard', verifyToken, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    const user = await User.findById(req.user.id).select('-password');
+    res.json({
+      message: `Welcome back, ${user.name}!`,
+      user,
+    });
   } catch (err) {
-    return res.status(403).json({ message: 'Invalid token' });
+    res.status(500).json({ error: 'Failed to fetch user data' });
   }
-}
-
-router.get('/dashboard', verifyToken, (req, res) => {
-  console.log("📥 /api/dashboard route hit");
-  res.json({ message: `Welcome ${req.user.role}! Access granted.` });
 });
 
 module.exports = router;
+
 
 

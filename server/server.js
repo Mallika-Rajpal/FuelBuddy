@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const protectedRoutes = require('./routes/protected');
+const fuelRoutes = require('./routes/fuel');
+
 
 
 
@@ -13,10 +15,12 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/api', protectedRoutes);
+
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api', protectedRoutes);
+app.use('/api/fuel', fuelRoutes);
 
 app.get('/', (req, res) => {
     res.send('FuelBuddy Backend is live!');
