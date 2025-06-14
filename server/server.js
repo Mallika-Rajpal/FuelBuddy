@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const protectedRoutes = require('./routes/protected');
+
+
 
 const authRoutes = require('./routes/auth');
 
@@ -10,6 +13,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/api', protectedRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -19,7 +23,7 @@ app.get('/', (req, res) => {
   });
   
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Connect MongoDB and start server
 mongoose.connect(process.env.MONGO_URI)
